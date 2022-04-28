@@ -1,0 +1,264 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0xDf4232Ac262c6B86dA7F4efc0c541DD3E2dc52Dc",
+    "txHash": "0x06cc6c5edf3ceb80a782c95c75aa8a959a13659fa4adef93f82cb261eb290b24"
+  },
+  "proxies": [
+    {
+      "address": "0x2e16ffA20e8a754aA8b3a7Aa1C3eB8818894EFfe",
+      "txHash": "0x12bf8704a35d159e4fc7a602ae5fc1bc2bd5086de7affdd0190db30d26545798",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x34504dC2ff5068b2Eb6ADeF715d12FBAFff1c690",
+      "txHash": "0x1efc1ee554ce101bb6e08e4dba9ffe2311921e202a0ca5ed476d9ccc71fae95c",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xBb36465F6f8F0C8eA465f9465cAA70F9a20333dc",
+      "txHash": "0xd63e4335ada5799f431e2acaa8e33579d8c480c6ca23b71eb15c452e9ce68f35",
+      "kind": "transparent"
+    },
+    {
+      "address": "0x5C7FA4C917396322cf110bAf3Bbf1de9f174756b",
+      "txHash": "0xe8d623f8e38787675f681f23e86eaaf138b4fba1e4f2d6fe9a9dc30f0b5facb8",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xee54D1BC95755a0C7327B348296e2758cE132C6A",
+      "txHash": "0xef1c7b8333bcdf4a5256c3f3e1aa05230d0f56fb10c27cf360375c93591f230c",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "d686971c45abaf41fcc2c7731c498dc59769ea311b8d8916f1833525684680fb": {
+      "address": "0x4e6C275330bfCefD14b3B4157FF4e50c919C65E7",
+      "txHash": "0xd0c69d59101152296c9e91c0c4aaf86513388219e69b1eb795bec144f445e73d",
+      "layout": {
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:39"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:44"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:87"
+          },
+          {
+            "label": "amountToBeVested",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_uint256",
+            "contract": "Vesting",
+            "src": "contracts/Vesting.sol:47"
+          },
+          {
+            "label": "vestingName",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_string_storage",
+            "contract": "Vesting",
+            "src": "contracts/Vesting.sol:50"
+          },
+          {
+            "label": "startTime",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_uint256",
+            "contract": "Vesting",
+            "src": "contracts/Vesting.sol:53"
+          },
+          {
+            "label": "releaseInterval",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_uint256",
+            "contract": "Vesting",
+            "src": "contracts/Vesting.sol:56"
+          },
+          {
+            "label": "releaseRate",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_uint256",
+            "contract": "Vesting",
+            "src": "contracts/Vesting.sol:59"
+          },
+          {
+            "label": "initialUnlock",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "Vesting",
+            "src": "contracts/Vesting.sol:62"
+          },
+          {
+            "label": "lockPeriod",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "Vesting",
+            "src": "contracts/Vesting.sol:65"
+          },
+          {
+            "label": "vestingPeriod",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "Vesting",
+            "src": "contracts/Vesting.sol:68"
+          },
+          {
+            "label": "vestingToken",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_address",
+            "contract": "Vesting",
+            "src": "contracts/Vesting.sol:71"
+          },
+          {
+            "label": "enteredStatus",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "Vesting",
+            "src": "contracts/Vesting.sol:76"
+          },
+          {
+            "label": "totalVestingAmount",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "Vesting",
+            "src": "contracts/Vesting.sol:81"
+          },
+          {
+            "label": "recipients",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_mapping(t_address,t_struct(VestingInfo)824_storage)",
+            "contract": "Vesting",
+            "src": "contracts/Vesting.sol:84"
+          },
+          {
+            "label": "participants",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_array(t_address)dyn_storage",
+            "contract": "Vesting",
+            "src": "contracts/Vesting.sol:87"
+          },
+          {
+            "label": "indexOf",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "Vesting",
+            "src": "contracts/Vesting.sol:88"
+          },
+          {
+            "label": "inserted",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_mapping(t_address,t_bool)",
+            "contract": "Vesting",
+            "src": "contracts/Vesting.sol:89"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_address)dyn_storage": {
+            "label": "address[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_address,t_bool)": {
+            "label": "mapping(address => bool)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_struct(VestingInfo)824_storage)": {
+            "label": "mapping(address => struct Vesting.VestingInfo)",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(VestingInfo)824_storage": {
+            "label": "struct Vesting.VestingInfo",
+            "members": [
+              {
+                "label": "totalAmount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amountWithdrawn",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        }
+      }
+    }
+  }
+}
