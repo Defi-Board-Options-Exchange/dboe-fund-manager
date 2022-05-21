@@ -28,7 +28,7 @@ async function main() {
     amountToBeVested: config.founder.amount,
     initialUnlock: 0,
     releaseRate: rateAccuracy.div(1080),
-    releaseInterval: dailyReleaseInterval,
+    releaseInterval: monthlyReleaseInterval,
     lockPeriod: yearlyLockPeriod*2, // 2 years
     vestingPeriod: duration.days(5*yearInDays) // 5 years - 60 months
   }
@@ -38,7 +38,7 @@ async function main() {
     amountToBeVested: config.projectDev.amount,
     initialUnlock: 0,
     releaseRate: rateAccuracy.div(1080),
-    releaseInterval: dailyReleaseInterval,
+    releaseInterval: monthlyReleaseInterval,
     lockPeriod: yearlyLockPeriod,
     vestingPeriod: duration.days(1.5*yearInDays) // 1.5 years 
   }
@@ -47,7 +47,7 @@ async function main() {
     amountToBeVested: config.execTeam.amount,
     initialUnlock: 0,
     releaseRate: rateAccuracy.div(1080),
-    releaseInterval: dailyReleaseInterval,
+    releaseInterval: monthlyReleaseInterval,
     lockPeriod: yearlyLockPeriod,
     vestingPeriod: duration.days(3*yearInDays) // 3 years
   }
@@ -56,7 +56,7 @@ async function main() {
     amountToBeVested: config.seedInvestors.amount,
     initialUnlock: 0,
     releaseRate: rateAccuracy.div(1080),
-    releaseInterval: dailyReleaseInterval,
+    releaseInterval: monthlyReleaseInterval,
     lockPeriod: yearlyLockPeriod,
     vestingPeriod: duration.days(3*yearInDays) // 3 years
   }
@@ -65,7 +65,7 @@ async function main() {
     amountToBeVested: config.advisors.amount,
     initialUnlock: 0,
     releaseRate: rateAccuracy.div(1080),
-    releaseInterval: dailyReleaseInterval,
+    releaseInterval: monthlyReleaseInterval,
     lockPeriod: yearlyLockPeriod,
     vestingPeriod: duration.days(2*yearInDays) // 2 years
   }
@@ -74,7 +74,7 @@ async function main() {
     amountToBeVested: config.strategicInvestors.amount,
     initialUnlock: 0,
     releaseRate: rateAccuracy.div(1080),
-    releaseInterval: dailyReleaseInterval,
+    releaseInterval: monthlyReleaseInterval,
     lockPeriod: yearlyLockPeriod,
     vestingPeriod: duration.days(3*yearInDays) // 36 months
   }
@@ -83,7 +83,7 @@ async function main() {
     amountToBeVested: config.strategicPartners.amount,
     initialUnlock: 0,
     releaseRate: rateAccuracy.div(1080),
-    releaseInterval: dailyReleaseInterval,
+    releaseInterval: monthlyReleaseInterval,
     lockPeriod: yearlyLockPeriod,
     vestingPeriod: duration.days(3*yearInDays) // 36 months
   }
@@ -92,7 +92,7 @@ async function main() {
     amountToBeVested: config.publicSale.amount,
     initialUnlock: 0,
     releaseRate: rateAccuracy.div(1080),
-    releaseInterval: dailyReleaseInterval,
+    releaseInterval: monthlyReleaseInterval,
     lockPeriod: monthlyLockPeriod,
     vestingPeriod: duration.days(6*monthInDays) // 36 months
   }
@@ -100,20 +100,23 @@ async function main() {
   //TODO
   DBOEToken = <CustomToken>await deployContract("CustomToken", "DBOE token", "DBOE", totalSupply);
   console.log("Token Deployed:", DBOEToken.address);
+
   const founderTokenVesting = <Vesting>await deployProxy("Vesting", dboeTokenAddress, founderTokenVestingParams);
   console.log("DBOE Team :", founderTokenVesting.address);
   const projectDevTokenVesting = <Vesting>await deployProxy("Vesting", dboeTokenAddress, projectDevTokenVestingParams);
   console.log("DBOE Project Dev:", projectDevTokenVesting.address);  
   const execTeamTokenVesting = <Vesting>await deployProxy("Vesting", dboeTokenAddress, execTeamTokenVestingParams);
   console.log("DBOE Exec Team :", execTeamTokenVesting.address);  
-  const seedInvestorsTokenVesting = <Vesting>await deployProxy("Vesting", dboeTokenAddress, seedInvestorsTokenVestingParams);
+  
+
+  /*const seedInvestorsTokenVesting = <Vesting>await deployProxy("Vesting", dboeTokenAddress, seedInvestorsTokenVestingParams);
   console.log("DBOE Seed Investors:", seedInvestorsTokenVesting.address);  
   const strategicInvestorsTokenVesting = <Vesting>await deployProxy("Vesting", dboeTokenAddress, strategicInvestorsTokenVestingParams);
   console.log("DBOE Advisor :", strategicInvestorsTokenVesting.address);  
   const strategicPartnersTokenVesting = <Vesting>await deployProxy("Vesting", dboeTokenAddress, strategicPartnersTokenVestingParams);
   console.log("DBOE Strategic Partners:", strategicPartnersTokenVesting.address);  
   const publicSaleTokenVesting = <Vesting>await deployProxy("Vesting", dboeTokenAddress, publicSaleTokenVestingParams);
-  console.log("DBOE Public Token Sale:", publicSaleTokenVesting.address);  
+  console.log("DBOE Public Token Sale:", publicSaleTokenVesting.address);  */
 
 }
 
