@@ -1,0 +1,18 @@
+[
+    {
+      "walletAddress": "0x8efe989AD6E464aDE731548293f3a8760a0934e1",
+      "amountDBOE": 10000
+    },
+    {
+      "walletAddress": "0x7c0cEf928602d467e42A79672eEE74fb8816b737",
+      "amountDBOE": 10000
+    },
+    {
+        "walletAddress": "0x560790E83653b8Dbbc886dfD7Be112fEB0E2dD99",
+        "amountDBOE": 10000
+    },
+    {
+        "walletAddress": "0x26B81d3FB55B3427C891dB199F702B1F8cD23bA9",
+        "amountDBOE": 10000
+    } 
+]
