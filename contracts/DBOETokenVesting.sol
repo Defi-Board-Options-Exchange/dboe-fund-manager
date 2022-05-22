@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity >= 0.8.3;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -24,7 +25,7 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
         // duration of the vesting period in seconds
         uint256  duration;
         // duration of a slice period for the vesting in seconds
-        uint256 slicePeriodSeconds;
+        uint256 releaseInterval;
         // whether or not the vesting is revocable
         bool  revocable;
         // total amount of tokens to be released at the end of the vesting
@@ -135,19 +136,19 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
     /**
     * @notice Creates a new vesting schedule for a beneficiary.
     * @param _beneficiary address of the beneficiary to whom vested tokens are transferred
-    * @param _start start time of the vesting period
     * @param _cliff duration in seconds of the cliff in which tokens will begin to vest
+    * @param _start start time of the vesting period
     * @param _duration duration in seconds of the period in which the tokens will vest
-    * @param _slicePeriodSeconds duration of a slice period for the vesting in seconds
+    * @param _releaseInterval duration of a release interval period for the vesting in seconds
     * @param _revocable whether the vesting is revocable or not
     * @param _amount total amount of tokens to be released at the end of the vesting
     */
     function createVestingSchedule(
         address _beneficiary,
-        uint256 _start,
         uint256 _cliff,
+        uint256 _start,
         uint256 _duration,
-        uint256 _slicePeriodSeconds,
+        uint256 _releaseInterval,
         bool _revocable,
         uint256 _amount
     )
@@ -159,7 +160,7 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
         );
         require(_duration > 0, "TokenVesting: duration must be > 0");
         require(_amount > 0, "TokenVesting: amount must be > 0");
-        require(_slicePeriodSeconds >= 1, "TokenVesting: slicePeriodSeconds must be >= 1");
+        require(_releaseInterval >= 1, "TokenVesting: releaseInterval must be >= 1");
         bytes32 vestingScheduleId = this.computeNextVestingScheduleIdForHolder(_beneficiary);
         uint256 cliff = _start.add(_cliff);
         vestingSchedules[vestingScheduleId] = VestingSchedule(
@@ -168,7 +169,7 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
             cliff,
             _start,
             _duration,
-            _slicePeriodSeconds,
+            _releaseInterval,
             _revocable,
             _amount,
             0,
@@ -305,7 +306,11 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
     }
 
     /**
-    * @dev Computes the vesting schedule identifier for an address and an index.
+    * @dev Computes the vesting schedule identifier for an address and an index.    
+    * abi.encodePacked(): Solidity supports a non-standard packed mode where:
+       - Types shorter than 32 bytes are neither zero padded nor sign extended and
+       dynamic types are encoded in-place and without the length.
+       - Array elements are padded, but still encoded in-place
     */
     function computeVestingScheduleIdForAddressAndIndex(address holder, uint256 index)
         public
@@ -329,7 +334,7 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
             return vestingSchedule.amountTotal.sub(vestingSchedule.released);
         } else {
             uint256 timeFromStart = currentTime.sub(vestingSchedule.start);
-            uint secondsPerSlice = vestingSchedule.slicePeriodSeconds;
+            uint secondsPerSlice = vestingSchedule.releaseInterval;
             uint256 vestedSlicePeriods = timeFromStart.div(secondsPerSlice);
             uint256 vestedSeconds = vestedSlicePeriods.mul(secondsPerSlice);
             uint256 vestedAmount = vestingSchedule.amountTotal.mul(vestedSeconds).div(vestingSchedule.duration);
