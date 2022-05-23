@@ -1,5 +1,5 @@
 import { ethers } from "hardhat";
-import { Vesting,CustomToken } from "../typechain";
+import { Token,DboeTokenVesting } from "../typechain";
 import { duration } from "../helper/utils";
 import { deployProxy,deployContract } from "../helper/deployer";
 import vestingTypes from '../helper/vesting-types'
@@ -20,7 +20,7 @@ async function main() {
   const yearlyLockPeriod = 12*30 * 24 * 60 * 60; // 365 days
   const monthInDays = 30;
   const yearInDays = 12*30;
-  let DBOEToken: CustomToken;
+  let DBOEToken: Token;
   const totalSupply = ethers.utils.parseUnits("200000000", 18);
 
   const founderTokenVestingParams = {
@@ -98,14 +98,14 @@ async function main() {
   }
   
   //TODO
-  DBOEToken = <CustomToken>await deployContract("CustomToken", "DBOE token", "DBOE", totalSupply);
+  DBOEToken = <Token>await deployContract("CustomToken", "DBOE token", "DBOE", totalSupply);
   console.log("Token Deployed:", DBOEToken.address);
 
-  const founderTokenVesting = <Vesting>await deployProxy("Vesting", dboeTokenAddress, founderTokenVestingParams);
+  const founderTokenVesting = <DboeTokenVesting>await deployProxy("Vesting", dboeTokenAddress, founderTokenVestingParams);
   console.log("DBOE Team :", founderTokenVesting.address);
-  const projectDevTokenVesting = <Vesting>await deployProxy("Vesting", dboeTokenAddress, projectDevTokenVestingParams);
+  const projectDevTokenVesting = <DboeTokenVesting>await deployProxy("Vesting", dboeTokenAddress, projectDevTokenVestingParams);
   console.log("DBOE Project Dev:", projectDevTokenVesting.address);  
-  const execTeamTokenVesting = <Vesting>await deployProxy("Vesting", dboeTokenAddress, execTeamTokenVestingParams);
+  const execTeamTokenVesting = <DboeTokenVesting>await deployProxy("Vesting", dboeTokenAddress, execTeamTokenVestingParams);
   console.log("DBOE Exec Team :", execTeamTokenVesting.address);  
   
 

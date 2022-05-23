@@ -1,7 +1,5 @@
 import { ethers } from "hardhat";
-import { Vesting,CustomToken } from "../typechain";
-import { duration } from "../helper/utils";
-import { deployProxy,deployContract } from "../helper/deployer";
+import { Token,DboeTokenVesting } from "../typechain";
 import vestingTypes from '../helper/vesting-types'
 
 const TokenAddress: any = {
@@ -20,7 +18,7 @@ async function main() {
   const yearlyLockPeriod = 12*30 * 24 * 60 * 60; // 365 days
   const monthInDays = 30;
   const yearInDays = 12*30;
-  let DBOEToken: CustomToken;
+  let DBOEToken: Token;
   const totalSupply = ethers.utils.parseUnits("200000000", 18);
 
   const [deployer] = await ethers.getSigners();

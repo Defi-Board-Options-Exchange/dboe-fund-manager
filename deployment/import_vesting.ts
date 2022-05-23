@@ -1,7 +1,7 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { ethers } from "hardhat"
-import { Vesting } from "../typechain"
+import { DboeTokenVesting } from "../typechain"
 import vestingTypes from '../helper/vesting-types'
 import teamData from '../data/team_vesting.json'
 const fs = require('fs')
@@ -9,15 +9,15 @@ const fs = require('fs')
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments } = hre
-  const vestingDeployment = await deployments.get('Vesting')
+  const vestingDeployment = await deployments.get('DBOETokenVesting')
   const config = vestingTypes.bsc
 
-  const teamContract = <Vesting>await ethers.getContractAt(
+  const teamContract = <DboeTokenVesting>await ethers.getContractAt(
     vestingDeployment.abi,
     config.team.address
   )
 
-  async function importParticipants(name: string, data: any, contract: Vesting) {
+  async function importParticipants(name: string, data: any, contract: DboeTokenVesting) {
     const failedTransactions = []
     for(let i = 0; i < data.length; i++) {
       try {
