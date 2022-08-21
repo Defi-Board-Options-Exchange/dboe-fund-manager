@@ -15,9 +15,11 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
     struct VestingSchedule{
+        string investorCategory; 
+        // investor category
         bool initialized;
         // beneficiary of tokens after they are released
-        address  beneficiary;
+        address  investor;
         // cliff period in seconds
         uint256  cliff;
         // start time of the vesting period
@@ -35,6 +37,14 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
         // whether or not the vesting has been revoked
         bool revoked;
     }
+    struct InvestorCategory{
+        string category;
+        // investor category
+        uint256 numSlots;
+        // max number of slots
+        uint256 numTokens;
+        // max number of tokens
+    }
 
     // address of the ERC20 token
     IERC20 immutable private _token;
@@ -43,6 +53,7 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
     mapping(bytes32 => VestingSchedule) private vestingSchedules;
     uint256 private vestingSchedulesTotalAmount;
     mapping(address => uint256) private holdersVestingCount;
+    mapping(bytes32 => InvestorCategory) private investorCategories;
 
     event Released(uint256 amount);
     event Revoked();
@@ -54,6 +65,7 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
         require(vestingSchedules[vestingScheduleId].initialized == true);
         _;
     }
+
 
     /**
     * @dev Reverts if the vesting schedule does not exist or has been revoked.
@@ -78,14 +90,14 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
     fallback() external payable {}
 
     /**
-    * @dev Returns the number of vesting schedules associated to a beneficiary.
+    * @dev Returns the number of vesting schedules associated to an investor.
     * @return the number of vesting schedules
     */
-    function getVestingSchedulesCountByBeneficiary(address _beneficiary)
+    function getVestingSchedulesCountByInvestor(address _investor)
     external
     view
     returns(uint256){
-        return holdersVestingCount[_beneficiary];
+        return holdersVestingCount[_investor];
     }
 
     /**
@@ -104,11 +116,11 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
     * @notice Returns the vesting schedule information for a given holder and index.
     * @return the vesting schedule structure information
     */
-    function getVestingScheduleByAddressAndIndex(address holder, uint256 index)
+    function getVestingScheduleByAddressAndIndex(address investor, uint256 index)
     external
     view
     returns(VestingSchedule memory){
-        return getVestingSchedule(computeVestingScheduleIdForAddressAndIndex(holder, index));
+        return getVestingSchedule(computeVestingScheduleIdForAddressAndIndex(investor, index));
     }
 
 
@@ -134,8 +146,39 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
     }
 
     /**
-    * @notice Creates a new vesting schedule for a beneficiary.
-    * @param _beneficiary address of the beneficiary to whom vested tokens are transferred
+    * @notice Creates a new investor category.
+    * @param _category investor category
+    * @param _numSlots # of slots
+    * @param _numTokens # of tokens
+    */
+    function createInvestorCategory(
+        string memory _category,
+        uint32 _numSlots,
+        uint256 _numTokens
+    )
+        public
+        onlyOwner{
+        require(
+            this.getWithdrawableAmount() >= _numTokens,
+            "TokenVesting: cannot register an investor category schedule because not sufficient tokens"
+        );
+        require(_numSlots > 0, "TokenVesting: number of slots > 0");
+        require(_numTokens > 0, "TokenVesting: amount must be > 0");
+        require(bytes(_category).length >0, "TokenVesting: Category must not be empty");        
+        bytes32 investorCategoryId = this.computeInvestorCategoryId(_category);
+        InvestorCategory memory investorCategory = this.getInvestorCategory(investorCategoryId);
+        require(bytes(investorCategory.category).length==0,"TokenVesting: Investor Category already existed");
+        investorCategories[investorCategoryId] = InvestorCategory(
+            _category,
+            _numSlots,
+            _numTokens
+        );
+    }
+
+    /**
+    * @notice Creates a new vesting schedule for an investor.
+    * @param _investorCategory investor Type
+    * @param _investor address of investor to whom vested tokens are transferred
     * @param _cliff duration in seconds of the cliff in which tokens will begin to vest
     * @param _start start time of the vesting period
     * @param _duration duration in seconds of the period in which the tokens will vest
@@ -144,7 +187,8 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
     * @param _amount total amount of tokens to be released at the end of the vesting
     */
     function createVestingSchedule(
-        address _beneficiary,
+        string memory _investorCategory,
+        address _investor,
         uint256 _cliff,
         uint256 _start,
         uint256 _duration,
@@ -161,11 +205,16 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
         require(_duration > 0, "TokenVesting: duration must be > 0");
         require(_amount > 0, "TokenVesting: amount must be > 0");
         require(_releaseInterval >= 1, "TokenVesting: releaseInterval must be >= 1");
-        bytes32 vestingScheduleId = this.computeNextVestingScheduleIdForHolder(_beneficiary);
+        require(bytes(_investorCategory).length >0, "TokenVesting: Investor Type must not be empty");
+        bytes32 investorCategoryId = this.computeInvestorCategoryId(_investorCategory);
+        InvestorCategory memory investorCategory = this.getInvestorCategory(investorCategoryId);
+        require(bytes(investorCategory.category).length==0,"TokenVesting: Investor Category already existed");
+        bytes32 vestingScheduleId = this.computeNextVestingScheduleIdForHolder(_investor);
         uint256 cliff = _start.add(_cliff);
         vestingSchedules[vestingScheduleId] = VestingSchedule(
+            _investorCategory,
             true,
-            _beneficiary,
+            _investor,
             cliff,
             _start,
             _duration,
@@ -177,8 +226,8 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
         );
         vestingSchedulesTotalAmount = vestingSchedulesTotalAmount.add(_amount);
         vestingSchedulesIds.push(vestingScheduleId);
-        uint256 currentVestingCount = holdersVestingCount[_beneficiary];
-        holdersVestingCount[_beneficiary] = currentVestingCount.add(1);
+        uint256 currentVestingCount = holdersVestingCount[_investor];
+        holdersVestingCount[_investor] = currentVestingCount.add(1);
     }
 
     /**
@@ -225,7 +274,7 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
         nonReentrant
         onlyIfVestingScheduleNotRevoked(vestingScheduleId){
         VestingSchedule storage vestingSchedule = vestingSchedules[vestingScheduleId];
-        bool isBeneficiary = msg.sender == vestingSchedule.beneficiary;
+        bool isBeneficiary = msg.sender == vestingSchedule.investor;
         bool isOwner = msg.sender == owner();
         require(
             isBeneficiary || isOwner,
@@ -234,7 +283,7 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
         uint256 vestedAmount = _computeReleasableAmount(vestingSchedule);
         require(vestedAmount >= amount, "TokenVesting: cannot release tokens, not enough vested tokens");
         vestingSchedule.released = vestingSchedule.released.add(amount);
-        address payable beneficiaryPayable = payable(vestingSchedule.beneficiary);
+        address payable beneficiaryPayable = payable(vestingSchedule.investor);
         vestingSchedulesTotalAmount = vestingSchedulesTotalAmount.sub(amount);
         _token.safeTransfer(beneficiaryPayable, amount);
     }
@@ -272,6 +321,17 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
         view
         returns(VestingSchedule memory){
         return vestingSchedules[vestingScheduleId];
+    }
+
+     /**
+    * @notice Returns the investor category given investor category ID.
+    * @return the investor category structure information
+    */
+    function getInvestorCategory(bytes32 investorCategoryId)
+        public
+        view
+        returns(InvestorCategory memory){
+        return investorCategories[investorCategoryId];
     }
 
     /**
@@ -317,6 +377,20 @@ contract DBOETokenVesting is Ownable, ReentrancyGuard{
         pure
         returns(bytes32){
         return keccak256(abi.encodePacked(holder, index));
+    }
+
+        /**
+    * @dev Computes the vesting schedule identifier for an address and an index.    
+    * abi.encodePacked(): Solidity supports a non-standard packed mode where:
+       - Types shorter than 32 bytes are neither zero padded nor sign extended and
+       dynamic types are encoded in-place and without the length.
+       - Array elements are padded, but still encoded in-place
+    */
+    function computeInvestorCategoryId(string memory investorCategory)
+        public
+        pure
+        returns(bytes32){
+        return keccak256(abi.encodePacked(investorCategory));
     }
 
     /**
